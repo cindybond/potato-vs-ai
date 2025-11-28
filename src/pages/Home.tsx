@@ -134,7 +134,7 @@ function Home() {
         return (
             <Box sx={{
                 display: 'flex',
-                gap: 30,
+                gap: {xs: 10, md:20},
                 alignItems: 'center',
                 justifyContent: 'center'
             }}>
@@ -231,15 +231,17 @@ function Home() {
             <Typography variant="h5" sx={{
                 fontFamily: 'Science Gothic',
                 fontWeight: 600,
-                fontSize: 60,
+                fontSize: {xs: '40px', md:'60px'},
                 textShadow: '2px 2px white, -2px -2px white'
             }}>
                 POTATO vs AI
             </Typography>
-            <Box sx={{
-                display: 'flex',
-                gap:20
-            }}> 
+            <Box sx={{ 
+                display: 'flex', 
+                gap: { xs: 2, sm: 5 }, 
+                flexDirection: { xs: 'column', sm: 'row' }, 
+                alignItems: 'center' 
+            }}>
                 <Button onClick={() => handleButtonClick()} sx={{
                     backgroundColor: '#fbca1f',
                     fontFamily: 'Quantico',
