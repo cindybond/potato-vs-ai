@@ -1,6 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { evaluate, optimalMove, type Board } from "../logic";
+import { motion } from "motion/react";
+import aiWinSound from "../assets/ai_win.wav";
+import playerWinSound from "../assets/player_win.wav";
+import drawSound from "../assets/draw.wav";
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import MusicOffIcon from '@mui/icons-material/MusicOff';
 
 function Home() {
     const [isPlayer, setIsPlayer] = useState(true);
@@ -8,13 +14,48 @@ function Home() {
     const [playerScore, setPlayerScore] = useState(0);
     const [aiScore, setAiScore] = useState(0);
     const [drawScore, setDrawScore] = useState(0);
+    const [soundEnabled, setSoundEnabled] = useState(false);
     const winner = evaluate(board);
 
     useEffect(() => {
-        if (winner === 1) setPlayerScore(prev => prev + 1);
-        if (winner === -1) setAiScore(prev => prev + 1);
-        if (winner === 0) setDrawScore(prev => prev + 1);
+
+        if (winner === 1 ) {
+            setPlayerScore(prev => prev + 1);
+            if (soundEnabled) new Audio(playerWinSound).play();
+        }
+        if (winner === -1) {
+            setAiScore(prev => prev + 1);
+            if (soundEnabled) new Audio(aiWinSound).play();
+        }
+        if (winner === 0) {
+            setDrawScore(prev => prev + 1);
+            if (soundEnabled) new Audio(drawSound).play();
+        }
     }, [winner]);
+
+    const toggleSound = () => {
+        setSoundEnabled(prev => !prev)
+    }
+
+    const showSoundButton = () => {
+        return (
+            <Box>
+                <IconButton onClick={toggleSound} sx={{
+                    backgroundColor: '#fbca1f',
+                    fontFamily: 'Quantico',
+                    padding: '0.6em 1.3em',
+                    fontWeight: 900,
+                    fontSize: '18px',
+                    border: '3px solid black',
+                    borderRadius: '0.4em',
+                    boxShadow: '0.1em 0.1em',
+                    color: 'black',
+                }}>
+                    {soundEnabled ? <MusicNoteIcon fontSize="large" /> : <MusicOffIcon fontSize="large"/>}
+                </IconButton>
+            </Box>
+        )
+    }
 
     const handleClick = (i: number) => {
         console.log(isPlayer)
@@ -46,20 +87,37 @@ function Home() {
     }
     
     const showWinner = () => {
+        var currWinner = ''
         if (winner === 0) {
-            return 'DRAW'
+            currWinner = 'DRAW'
         } else if (winner === 1) {
-            return 'YOU WIN'
+            currWinner = 'YOU WIN'
         } else if (winner === -1) {
-            return 'AI WIN'
+            currWinner = 'AI WIN'
         }
-    }
 
-    
+        return (
+            <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                    duration: 0.4,
+                    scale: { type: "spring", visualDuration: 1.0, bounce: 1.2 },
+            }}>
+                <Typography sx={{
+                    fontFamily: 'Quantico',
+                    fontWeight: 600,
+                    fontSize: 20
+                }}>
+                    {currWinner}
+                </Typography>
+            </motion.div>
+        )
+    }
 
     const showStatus = () => {
         return(
-            <Box>
+            <div>
                 <Typography sx={{
                     color: 'yellow',
                     fontWeight: 600,
@@ -68,7 +126,7 @@ function Home() {
                 }}>
                     {winner !== null ? showWinner() : isPlayer ? "YOUR TURN POTATO" : "AI THINKING..."}
                 </Typography>
-            </Box>
+            </div>
         )
     }
 
@@ -134,7 +192,6 @@ function Home() {
         )
     }
 
-
     function Square({i, value}:{i:number, value: string | null}) {
         return(
             <Box>
@@ -159,7 +216,7 @@ function Home() {
 
     return(
         <Box sx={{
-            backgroundColor: '#8A2BE2',
+            backgroundColor: '#70115eff',
             minHeight: '100vh',
             display: 'flex',
             flexWrap: "wrap",
@@ -170,6 +227,7 @@ function Home() {
             textAlign: 'center',
             gap: 5
         }}>
+            
             <Typography variant="h5" sx={{
                 fontFamily: 'Science Gothic',
                 fontWeight: 600,
@@ -178,31 +236,38 @@ function Home() {
             }}>
                 POTATO vs AI
             </Typography>
-            <Button onClick={() => handleButtonClick()} sx={{
-                backgroundColor: '#fbca1f',
-                fontFamily: 'Quantico',
-                padding: '0.6em 1.3em',
-                fontWeight: 900,
-                fontSize: '18px',
-                border: '3px solid black',
-                borderRadius: '0.4em',
-                boxShadow: '0.1em 0.1em',
-                color: 'black',
-                '&:hover' : {
-                    transform: 'translate(-0.05em, -0.05em)',
-                    boxShadow: '0.15em 0.15em',
-                    border: '3px solid black'
-                },
-                ':active' : {
-                    transform: 'translate(0.05em, 0.05em)',
-                    boxShadow: '0.05em 0.05em'
-                },
-                '&:focus' :{
-                    outline: 'none'
-                }
-            }}>
-                NEW GAME
-            </Button>
+            <Box sx={{
+                display: 'flex',
+                gap:20
+            }}> 
+                <Button onClick={() => handleButtonClick()} sx={{
+                    backgroundColor: '#fbca1f',
+                    fontFamily: 'Quantico',
+                    padding: '0.6em 1.3em',
+                    fontWeight: 900,
+                    fontSize: '18px',
+                    border: '3px solid black',
+                    borderRadius: '0.4em',
+                    boxShadow: '0.1em 0.1em',
+                    color: 'black',
+                    '&:hover' : {
+                        transform: 'translate(-0.05em, -0.05em)',
+                        boxShadow: '0.15em 0.15em',
+                        border: '3px solid black'
+                    },
+                    ':active' : {
+                        transform: 'translate(0.05em, 0.05em)',
+                        boxShadow: '0.05em 0.05em'
+                    },
+                    '&:focus' :{
+                        outline: 'none'
+                    }
+                }}>
+                    NEW GAME
+                </Button>
+                {showSoundButton()}
+            </Box>
+            
             
             {showStatus()}
             <Box sx={{
