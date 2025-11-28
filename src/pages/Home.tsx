@@ -1,21 +1,30 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { evaluate, optimalMove, type Board } from "../logic";
 
 function Home() {
     const [isPlayer, setIsPlayer] = useState(true);
     const [board, setBoard] = useState(Array(9).fill(null));
+    const [playerScore, setPlayerScore] = useState(0);
+    const [aiScore, setAiScore] = useState(0);
+    const [drawScore, setDrawScore] = useState(0);
     const winner = evaluate(board);
+
+    useEffect(() => {
+        if (winner === 1) setPlayerScore(prev => prev + 1);
+        if (winner === -1) setAiScore(prev => prev + 1);
+        if (winner === 0) setDrawScore(prev => prev + 1);
+    }, [winner]);
 
     const handleClick = (i: number) => {
         console.log(isPlayer)
-        if(isPlayer && !board[i]) {
+        if(isPlayer && !board[i] && winner === null) {
             const newBoard = [...board];
-            newBoard[i] = "X";
+            newBoard[i] = '🥔';
             setBoard(newBoard);
             setIsPlayer(false);
 
-            setTimeout(() => handleAITurn(newBoard), 500)
+            setTimeout(() => handleAITurn(newBoard), 700)
         } else {
             console.log('Wait for your turn dingus!')
         }  
@@ -27,10 +36,10 @@ function Home() {
     }
 
     const handleAITurn = (currBoard : Board) => {
-        const move = optimalMove(currBoard, 'O');
+        const move = optimalMove(currBoard, '🤖');
         if (move !== null) {
             const newBoard = [...currBoard];
-            newBoard[move] = 'O';
+            newBoard[move] = '🤖';
             setBoard(newBoard);
             setIsPlayer(true);
         }
@@ -46,18 +55,85 @@ function Home() {
         }
     }
 
+    
+
     const showStatus = () => {
         return(
             <Box>
                 <Typography sx={{
-                    color: 'white',
-                    fontFamily: 'Quantico'
+                    color: 'yellow',
+                    fontWeight: 600,
+                    fontFamily: 'Quantico',
+                    fontSize: 20
                 }}>
-                    {winner !== null ? showWinner() : isPlayer ? "YOUR TURN" : "AI THINKING..."}
+                    {winner !== null ? showWinner() : isPlayer ? "YOUR TURN POTATO" : "AI THINKING..."}
                 </Typography>
             </Box>
         )
     }
+
+    const showScore = () => {
+        return (
+            <Box sx={{
+                display: 'flex',
+                gap: 30,
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                
+                {/* Player */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <Typography sx={{ 
+                        fontSize: 30,
+                        color: 'white',
+                        textShadow: '3px 3px black',
+                        fontFamily: 'Quantico'
+                    }}>
+                        🥔 {playerScore}
+                    </Typography>
+                </Box>
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <Typography sx={{ 
+                        fontSize: 30,
+                        color: 'white',
+                        textShadow: '3px 3px black',
+                        fontFamily: 'Quantico'
+                    }}>
+                        DRAW {drawScore}
+                    </Typography>
+                </Box>
+
+                {/* AI */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <Typography sx={{ 
+                        fontSize: 30,
+                        color: 'white',
+                        textShadow: '3px 3px black',
+                        fontFamily: 'Quantico'
+                    }}>
+                        🤖 {aiScore}
+                    </Typography>
+                </Box>
+
+            </Box>
+        )
+    }
+
 
     function Square({i, value}:{i:number, value: string | null}) {
         return(
@@ -97,10 +173,10 @@ function Home() {
             <Typography variant="h5" sx={{
                 fontFamily: 'Science Gothic',
                 fontWeight: 600,
-                fontSize: 50,
+                fontSize: 60,
                 textShadow: '2px 2px white, -2px -2px white'
             }}>
-                TIC TAC TOE vs AI
+                POTATO vs AI
             </Typography>
             <Button onClick={() => handleButtonClick()} sx={{
                 backgroundColor: '#fbca1f',
@@ -127,6 +203,7 @@ function Home() {
             }}>
                 NEW GAME
             </Button>
+            
             {showStatus()}
             <Box sx={{
                 display: 'grid',
@@ -136,6 +213,7 @@ function Home() {
                     <Square key={index} i={index} value={value} />
                 ))}
             </Box>
+            {showScore()}
             
         </Box>
     )

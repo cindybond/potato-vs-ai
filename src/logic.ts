@@ -1,4 +1,4 @@
-export type Board = (string | null)[]; // 'X', 'O', or null
+export type Board = (string | null)[]; // '🥔', '🤖', or null
 
 // Check if a player has won
 export function checkWin(board: Board, player: string): boolean {
@@ -30,8 +30,8 @@ function generateMoves(board: Board): number[] {
 
 // Evaluate the board
 export function evaluate(board: Board): number | null {
-    if (checkWin(board, 'X')) return 1;
-    if (checkWin(board, 'O')) return -1;
+    if (checkWin(board, '🥔')) return 1;
+    if (checkWin(board, '🤖')) return -1;
     if (!board.includes(null)) return 0; // Draw
     return null; // Not terminal
 }
@@ -46,7 +46,7 @@ function maxValue(board: Board, alpha: number, beta: number): [number, number | 
 
     for (let idx of generateMoves(board)) {
         const newBoard = [...board];
-        newBoard[idx] = 'X';
+        newBoard[idx] = '🥔';
         const [moveVal] = minValue(newBoard, alpha, beta);
         if (moveVal > value) {
             value = moveVal;
@@ -69,7 +69,7 @@ function minValue(board: Board, alpha: number, beta: number): [number, number | 
 
     for (let idx of generateMoves(board)) {
         const newBoard = [...board];
-        newBoard[idx] = 'O';
+        newBoard[idx] = '🤖';
         const [moveVal] = maxValue(newBoard, alpha, beta);
         if (moveVal < value) {
             value = moveVal;
@@ -83,10 +83,10 @@ function minValue(board: Board, alpha: number, beta: number): [number, number | 
 }
 
 // Get optimal move for a player
-export function optimalMove(board: Board, player: 'X' | 'O'): number | null {
+export function optimalMove(board: Board, player: '🥔' | '🤖'): number | null {
     if (evaluate(board) !== null) return null;
 
-    if (player === 'X') {
+    if (player === '🥔') {
         const [, move] = maxValue(board, -Infinity, Infinity);
         return move;
     } else {
