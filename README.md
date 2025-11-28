@@ -16,6 +16,10 @@ PS: Try beating the AI 🤖!
 
 - Option to toggle sound effects.
 
+## Screenshot
+
+![Screenshot of gameplay](/src/assets/ss.png)
+
 ## Try it live
 
 [Play Potato vs AI](https://potato-vs-ai.vercel.app/)
